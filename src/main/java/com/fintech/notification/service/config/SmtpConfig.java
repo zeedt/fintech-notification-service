@@ -1,13 +1,15 @@
 package com.fintech.notification.service.config;
 
 
+import com.fintech.notification.service.service.EmailClientService;
 import com.fintech.notification.service.service.NotificationService;
+import com.fintech.notification.service.service.impl.providers.SmtpEmailClientServiceImpl;
+import com.fintech.notification.service.service.impl.providers.TrustifiEmailClientServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import com.fintech.notification.service.service.impl.SmtpNotificationServiceImpl;
 import java.util.Properties;
 
 @Configuration
@@ -19,7 +21,6 @@ public class SmtpConfig {
     private String smtpPassword;
     @Value("${email.service.bean:SMTP}")
     private String emailServiceBean;
-
 
     @Bean
     public JavaMailSender getJavaMailSender() {
@@ -37,9 +38,11 @@ public class SmtpConfig {
     }
 
     @Bean
-    public NotificationService notificationService() {
+    public EmailClientService emailClientService() {
         if (emailServiceBean.equals("SMTP"))
-            return new SmtpNotificationServiceImpl();
+            return new SmtpEmailClientServiceImpl();
+        if (emailServiceBean.equals("TRUSTIFI"))
+            return new TrustifiEmailClientServiceImpl();
         return null;
     }
 }
